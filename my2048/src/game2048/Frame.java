@@ -15,7 +15,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.image.TileObserver;
 
 /**
  * 2048Game made by JAVA
@@ -36,6 +35,7 @@ public class Frame extends JFrame {
 	private JTextField scoreString;
 	private JButton startButton; // 开始按钮
 	private game2048.Operation operation;
+
 	public Frame(InnerData myData) {
 		super();
 		this.data = myData;
@@ -125,55 +125,58 @@ public class Frame extends JFrame {
 
 	protected void do_keyPressed(final KeyEvent e) {
 		int keyCode = e.getKeyCode();
+		int time = 0;
 		switch (keyCode) {
 		case KeyEvent.VK_LEFT: {
-			for (int i = 0; i < 4; i++)
-				operation.pressedLeft(i, 1);
-			operation.randomPosNumber(text);
-			String string = "得分：";
-			string += data.score;
-			scoreString.setText(string);
+			for (int i = 0; i < 4; i++) {
+				if (!operation.pressedLeft(i, 1, false))
+					time++;
+			}
 			break;
 		}
 		case KeyEvent.VK_RIGHT: {
-			for (int i = 0; i < 4; i++)
-				operation.pressedRight(i, 2);
-			operation.randomPosNumber(text);
-			String string = "得分：";
-			string += data.score;
-			scoreString.setText(string);
+			for (int i = 0; i < 4; i++) {
+				if (!operation.pressedRight(i, 2, false))
+					time++;
+			}
 			break;
 		}
 		case KeyEvent.VK_UP: {
-			for (int j = 0; j < 4; j++)
-				operation.pressedUp(1, j);
-			operation.randomPosNumber(text);
-			String string = "得分：";
-			string += data.score;
-			scoreString.setText(string);
+			for (int j = 0; j < 4; j++) {
+				if (!operation.pressedUp(1, j, false))
+					time++;
+			}
 			break;
 		}
 		case KeyEvent.VK_DOWN: {
-			for (int j = 0; j < 4; j++)
-				operation.pressedDown(2, j);
+			for (int j = 0; j < 4; j++) {
+				if (!operation.pressedDown(2, j, false))
+					time++;
+			}
+			break;
+		}
+		default: {
+			break;
+		}
+		}
+		if (time != 4) {
 			operation.randomPosNumber(text);
 			String string = "得分：";
 			string += data.score;
 			scoreString.setText(string);
-			break;
+		} else {
+			if (operation.isOver()) {
+				operation.init(text);
+				startButton.requestFocus();
+			}
 		}
-		default: {
-		}
-			return;
-		}
-		// ...更新操作
+		return;
 	}
 
 	public void run() {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setVisible(true);
-		// this.requestFocus();
 
 	}
 }
-// text边框颜色
+// 此版本只能随机假如2

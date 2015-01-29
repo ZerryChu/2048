@@ -13,12 +13,15 @@ public class Operation {
 		this.data = myData;
 	}
 
+	public void init(JLabel[][] text) {
+		for (int i = 0; i < 4; i++)
+			for (int j = 0; j < 4; j++) {
+				data.mat[i][j] = 0;
+				text[i][j].setText("");
+			}
+	}
+
 	public void randomPosNumber(JLabel[][] text) {
-		if (isOver()) {
-			// 弹框游戏结束，最终得分...
-			// 停止按键监听...在start后重新开启按键监听
-			return;
-		}
 		Random randomPos = new Random();
 		boolean b = true;
 		int i, j;
@@ -102,125 +105,130 @@ public class Operation {
 		}
 	};
 
-	public void pressedUp(int i, int j) {
+	public boolean pressedUp(int i, int j, boolean z) {
 		if (i >= 4)
-			return;
+			return z;
 		int pos = i;
 		while (pos > 0 && data.mat[pos - 1][j] == 0 && data.mat[pos][j] != 0) {
+			z = true;
 			data.mat[pos - 1][j] = data.mat[pos][j];
 			data.mat[pos][j] = 0;
 			pos--;
 		}// 上移
 		if (pos > 0 && data.mat[pos][j] == data.mat[pos - 1][j]
 				&& data.mat[pos][j] != 0) {
+			z = true;
 			data.score += data.mat[pos][j];
 			data.mat[pos][j] = 0;
 			data.mat[pos - 1][j] *= 2;
 			pos = i + 1;
-			while (pos > 0 && pos < 4 && data.mat[pos - 1][j] == 0 && data.mat[pos][j] != 0) {
+			while (pos > 0 && pos < 4 && data.mat[pos - 1][j] == 0
+					&& data.mat[pos][j] != 0) {
 				data.mat[pos - 1][j] = data.mat[pos][j];
 				data.mat[pos][j] = 0;
 				pos--;
 			}// 上移
-			pressedUp(i + 2, j);
+			return pressedUp(i + 2, j, z);
 		}// 与上合并
 		else
-			pressedUp(i + 1, j);
+			return pressedUp(i + 1, j, z);
 	}
 
-	public void pressedDown(int i, int j) {
+	public boolean pressedDown(int i, int j, boolean z) {
 		if (i < 0)
-			return;
+			return z;
 		int pos = i;
 		while (pos < 3 && data.mat[pos + 1][j] == 0 && data.mat[pos][j] != 0) {
+			z = true;
 			data.mat[pos + 1][j] = data.mat[pos][j];
 			data.mat[pos][j] = 0;
 			pos++;
-		}// 上移
+		}
 		if (pos < 3 && data.mat[pos][j] == data.mat[pos + 1][j]
 				&& data.mat[pos][j] != 0) {
+			z = true;
 			data.score += data.mat[pos][j];
 			data.mat[pos][j] = 0;
 			data.mat[pos + 1][j] *= 2;
 			pos = i - 1;
-			while (pos < 3 && pos >= 0 && data.mat[pos + 1][j] == 0 && data.mat[pos][j] != 0) {
+			while (pos < 3 && pos >= 0 && data.mat[pos + 1][j] == 0
+					&& data.mat[pos][j] != 0) {
 				data.mat[pos + 1][j] = data.mat[pos][j];
 				data.mat[pos][j] = 0;
 				pos++;
-			}// 上移
-			pressedDown(i - 2, j);
-		}// 与上合并
-		else
-			pressedDown(i - 1, j);
+			}
+			return pressedDown(i - 2, j, z);
+		} else
+			return pressedDown(i - 1, j, z);
 	}
 
-	public void pressedRight(int i, int j) {
+	public boolean pressedRight(int i, int j, boolean z) {
 		if (j < 0)
-			return;
+			return z;
 		int pos = j;
 		while (pos < 3 && data.mat[i][pos + 1] == 0 && data.mat[i][pos] != 0) {
+			z = true;
 			data.mat[i][pos + 1] = data.mat[i][pos];
 			data.mat[pos][j] = 0;
 			pos++;
-		}// 上移
+		}
 		if (pos < 3 && data.mat[i][pos] == data.mat[i][pos + 1]
 				&& data.mat[i][pos] != 0) {
-			data.score += data.mat[i][pos + 1];
+			z = true;
+			data.score += data.mat[i][pos];
 			data.mat[i][pos] = 0;
 			data.mat[i][pos + 1] *= 2;
 			pos = j - 1;
-			while (pos < 3 && pos >= 0 && data.mat[i][pos + 1] == 0 && data.mat[i][pos] != 0) {
+			while (pos < 3 && pos >= 0 && data.mat[i][pos + 1] == 0
+					&& data.mat[i][pos] != 0) {
 				data.mat[i][pos + 1] = data.mat[i][pos];
 				data.mat[i][pos] = 0;
 				pos++;
-			}// 上移
-			pressedRight(i, j - 2);
-		}// 与上合并
-		else
-			pressedRight(i, j - 1);
+			}
+			return pressedRight(i, j - 2, z);
+		} else
+			return pressedRight(i, j - 1, z);
 	}
 
-	public void pressedLeft(int i, int j) {
+	public boolean pressedLeft(int i, int j, boolean z) {
 		if (j >= 4)
-			return;
+			return z;
 		int pos = j;
 		while (pos > 0 && data.mat[i][pos - 1] == 0 && data.mat[i][pos] != 0) {
+			z = true;
 			data.mat[i][pos - 1] = data.mat[i][pos];
 			data.mat[i][pos] = 0;
 			pos--;
-		}// 上移
+		}
 		if (pos > 0 && data.mat[i][pos] == data.mat[i][pos - 1]
 				&& data.mat[i][pos] != 0) {
+			z = true;
 			data.score += data.mat[i][pos];
 			data.mat[i][pos] = 0;
 			data.mat[i][pos - 1] *= 2;
 			pos = j + 1;
-			while (pos > 0 && pos < 4 && data.mat[i][pos - 1] == 0 && data.mat[i][pos] != 0) {
+			while (pos > 0 && pos < 4 && data.mat[i][pos - 1] == 0
+					&& data.mat[i][pos] != 0) {
 				data.mat[i][pos - 1] = data.mat[i][pos];
 				data.mat[i][pos] = 0;
 				pos--;
-			}// 上移
-			pressedLeft(i, j + 2);
-		}// 与上合并
-		else
-			pressedLeft(i, j + 1);
+			}
+			return pressedLeft(i, j + 2, z);
+		} else
+			return pressedLeft(i, j + 1, z);
 	}
 
 	boolean isOver() {
-		for (int i = 0; i < 4; i++)
-			for (int j = 0; j < 4; j++) {
-				if (data.mat[i][j] == 0)
-					return false;
-				else if(data.mat[i][j] == 2048)
-					return true;
+		for (int i = 1; i < 3; i++)
+			for (int j = 1; j < 3; j++) {
+				if (data.mat[i][j] == data.mat[i - 1][j]
+						|| data.mat[i][j] == data.mat[i + 1][j]
+						|| data.mat[i][j] == data.mat[i][j - 1]
+						|| data.mat[i][j] == data.mat[i][j + 1])
+					return false;// 修改
 			}
 		return true;
 	}// 判断是否还能产生随机的2
 
-	public void update(JLabel[][] text) {
-
-		// text数值更新
-		// 更新score:data.score
-		// text染色 case
-	}
-}//除去无效的方向操作
+}// 除去无效的方向操作
+//左右操作debug
