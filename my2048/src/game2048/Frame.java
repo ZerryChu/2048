@@ -53,9 +53,6 @@ public class Frame extends JFrame {
 			public void keyPressed(KeyEvent e) {
 				// TODO Auto-generated method stub
 				do_keyPressed(e);
-				for (int i = 0; i < 4; i++)
-					for (int j = 0; j < 4; j++)
-						operation.update(i, j, text[i][j]);
 			}
 		});// 监听键盘上下左右键
 
@@ -164,10 +161,24 @@ public class Frame extends JFrame {
 			String string = "得分：";
 			string += data.score;
 			scoreString.setText(string);
+			for (int i = 0; i < 4; i++)
+				for (int j = 0; j < 4; j++)
+					operation.update(i, j, text[i][j]);
 		} else {
-			if (operation.isOver()) {
+			if (operation.isOver() == 1) { // 游戏失败
 				operation.init(text);
 				startButton.requestFocus();
+				text[0][0].setText("游");
+				text[0][1].setText("戏");
+				text[0][2].setText("失");
+				text[0][3].setText("败");
+			} else if (operation.isOver() == 2) { // 游戏胜利
+				operation.init(text);
+				startButton.requestFocus();
+				text[0][0].setText("游");
+				text[0][1].setText("戏");
+				text[0][2].setText("胜");
+				text[0][3].setText("利");
 			}
 		}
 		return;
@@ -179,4 +190,3 @@ public class Frame extends JFrame {
 
 	}
 }
-// 此版本只能随机假如2

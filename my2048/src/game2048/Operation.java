@@ -16,22 +16,29 @@ public class Operation {
 	public void init(JLabel[][] text) {
 		for (int i = 0; i < 4; i++)
 			for (int j = 0; j < 4; j++) {
-				data.mat[i][j] = 0;
+				text[i][j].setBackground(Color.WHITE);
 				text[i][j].setText("");
+				text[i][j]
+						.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 			}
 	}
 
 	public void randomPosNumber(JLabel[][] text) {
 		Random randomPos = new Random();
 		boolean b = true;
-		int i, j;
+		int i, j, k;
 		while (b) {
 			i = randomPos.nextInt(4);
 			j = randomPos.nextInt(4);
+			k = randomPos.nextInt(4); // 出现4的几率1/4
 			if (data.mat[i][j] == 0) {
-				data.mat[i][j] = 2;
-				text[i][j].setText("2");
-				update(i, j, text[i][j]);
+				if (k < 3) {
+					data.mat[i][j] = 2;
+					update(i, j, text[i][j]);
+				} else {
+					data.mat[i][j] = 4;
+					update(i, j, text[i][j]);
+				}
 				b = false;
 			}
 		}
@@ -91,12 +98,12 @@ public class Operation {
 			text.setText("512");
 			break;
 		case 1028:
-			text.setBackground(Color.darkGray);
+			text.setBackground(Color.lightGray);
 			text.setBorder(BorderFactory.createLineBorder(Color.darkGray));
 			text.setText("1028");
 			break;
 		case 2048:
-			text.setBackground(Color.BLACK);
+			text.setBackground(Color.gray);
 			text.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 			text.setText("2048");
 			break;
@@ -116,7 +123,7 @@ public class Operation {
 			pos--;
 		}// 上移
 		if (pos > 0 && data.mat[pos][j] == data.mat[pos - 1][j]
-				&& data.mat[pos][j] != 0) {
+				&& data.mat[pos][j] != 0) { // 向上合并
 			z = true;
 			data.score += data.mat[pos][j];
 			data.mat[pos][j] = 0;
@@ -129,8 +136,7 @@ public class Operation {
 				pos--;
 			}// 上移
 			return pressedUp(i + 2, j, z);
-		}// 与上合并
-		else
+		} else
 			return pressedUp(i + 1, j, z);
 	}
 
@@ -169,7 +175,7 @@ public class Operation {
 		while (pos < 3 && data.mat[i][pos + 1] == 0 && data.mat[i][pos] != 0) {
 			z = true;
 			data.mat[i][pos + 1] = data.mat[i][pos];
-			data.mat[pos][j] = 0;
+			data.mat[i][pos] = 0;
 			pos++;
 		}
 		if (pos < 3 && data.mat[i][pos] == data.mat[i][pos + 1]
@@ -218,17 +224,23 @@ public class Operation {
 			return pressedLeft(i, j + 1, z);
 	}
 
-	boolean isOver() {
-		for (int i = 1; i < 3; i++)
-			for (int j = 1; j < 3; j++) {
-				if (data.mat[i][j] == data.mat[i - 1][j]
-						|| data.mat[i][j] == data.mat[i + 1][j]
-						|| data.mat[i][j] == data.mat[i][j - 1]
-						|| data.mat[i][j] == data.mat[i][j + 1])
-					return false;// 修改
+	public int isOver() {
+		for (int i = 0; i < 4; i++)
+			for (int j = 0; j < 4; j++) {
+				if (data.mat[i][j] == 0)
+					return 0;
+				if (data.mat[i][j] == 2048)
+					return 2; // 游戏胜利
+				if (i > 0) {
+					if (data.mat[i][j] == data.mat[i - 1][j])
+						return 0;
+				}
+				if (j > 0) {
+					if (data.mat[i][j] == data.mat[i][j - 1])
+						return 0;
+				}
 			}
-		return true;
-	}// 判断是否还能产生随机的2
+		return 1; // 游戏失败
+	}
 
-}// 除去无效的方向操作
-//左右操作debug
+}
